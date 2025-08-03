@@ -1,0 +1,15 @@
+config:
+  organization:
+    name: "ANT"
+
+  admin:
+    email: "ashu.tiwary19@gmail.com"
+    password: "KafkaDemo@123"
+
+  database:
+    host: 'localhost'
+    port: 5432
+    name: 'kafka_db'
+    username: 'postgres'
+    password: 'password'
+    
