@@ -11,23 +11,24 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ProducerDemoWithCallback {
-	public static final Logger log = LoggerFactory.getLogger(ProducerDemoWithCallback.class);
+public class ProducerDemoWithKeys {
+	public static final Logger log = LoggerFactory.getLogger(ProducerDemoWithKeys.class);
 
 	public static void main(String[] args) {
 		Properties properties = new Properties();
+		String topic_name = "key_topic";
 
 		// Kafka bootstrap server
 		properties.setProperty("bootstrap.servers", "localhost:9092");
 
 		// kafka batch size for sticky partition
 		// In production we don't go for small batch but rather 16kb batch sizs
-		properties.setProperty("batch.size", "1000");
+		properties.setProperty("batch.size", "5");
 		properties.setProperty("linger.ms", "100");
-		
+
 		// set partition to roundrobin
-		properties.put("partitioner.class", "org.apache.kafka.clients.producer.RoundRobinPartitioner");
-		
+//		properties.put("partitioner.class", "org.apache.kafka.clients.producer.RoundRobinPartitioner");
+
 		// Producer properties
 		properties.setProperty("key.serializer", StringSerializer.class.getName());
 		properties.setProperty("value.serializer", StringSerializer.class.getName());
@@ -36,9 +37,10 @@ public class ProducerDemoWithCallback {
 		KafkaProducer<String, String> producer = new KafkaProducer<String, String>(properties);
 
 		// create a Producer record
-		for (int j = 1; j <= 100; j++) {
-			for (int i = 1; i <= 100; i++) {
-				ProducerRecord<String, String> producerRecord = new ProducerRecord<String, String>("demo_java",
+		for (int j = 1; j <= 20; j++) {
+			for (int i = 1; i <= 5; i++) {
+				String key = "id_" + i;
+				ProducerRecord<String, String> producerRecord = new ProducerRecord<String, String>(topic_name, key,
 						"Producer with callback demo : " + j + "-" + i);
 
 				// Send Data --> This sends data synchronouslly so next two lines is not needed
@@ -47,8 +49,10 @@ public class ProducerDemoWithCallback {
 					@Override
 					public void onCompletion(RecordMetadata metadata, Exception exception) {
 						if (exception == null) {
-							log.info("Received new Metadata \n Topic : {}\nPartition : {}\nOffset : {}\nTimestamp : {}",
-									metadata.topic(), metadata.partition(), metadata.offset(), metadata.timestamp());
+							log.info(
+									"Received new Metadata \n Topic : {}\nKey | Partition : {} | {}\nOffset : {}\nTimestamp : {}\n key : {}",
+									metadata.topic(), key, metadata.partition(), metadata.offset(),
+									metadata.timestamp());
 						} else {
 							log.error("Exception occured : ", exception);
 						}
