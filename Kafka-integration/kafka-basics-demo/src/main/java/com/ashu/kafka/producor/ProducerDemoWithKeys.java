@@ -50,7 +50,7 @@ public class ProducerDemoWithKeys {
 					public void onCompletion(RecordMetadata metadata, Exception exception) {
 						if (exception == null) {
 							log.info(
-									"Received new Metadata \n Topic : {}\nKey | Partition : {} | {}\nOffset : {}\nTimestamp : {}\n key : {}",
+									"Received new Metadata \nTopic : {}\nKey | Partition : {} | {}\nOffset : {}\nTimestamp : {}\n key : {}",
 									metadata.topic(), key, metadata.partition(), metadata.offset(),
 									metadata.timestamp());
 						} else {

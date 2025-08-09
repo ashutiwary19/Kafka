@@ -14,8 +14,9 @@ public class ProducerDemo {
 	public static final Logger log = LoggerFactory.getLogger(ProducerDemo.class);
 
 	public static void main(String[] args) {
+		String topic = "consumer_topic";
 		Properties properties = new Properties();
-
+		
 		// Kafka bootstrap server
 		properties.setProperty("bootstrap.servers", "localhost:9092");
 
@@ -27,12 +28,18 @@ public class ProducerDemo {
 		KafkaProducer<String, String> producer = new KafkaProducer<String, String>(properties);
 
 		// create a Producer record
-		for (int i = 11; i <= 20; i++) {
-			ProducerRecord<String, String> producerRecord = new ProducerRecord<String, String>("demo_java",
+		for (int i = 11; i <= 1000; i++) {
+			ProducerRecord<String, String> producerRecord = new ProducerRecord<String, String>(topic,
 					"Hello World-" + i);
 			
 			// Send Data --> This sends data synchronouslly so next two lines is not needed
 			producer.send(producerRecord);
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		// Tell the producer to send all data and block until done - synchronous
 		producer.flush();
